@@ -2,6 +2,7 @@ import axios from 'axios';
 import { useSession } from '@/context/SessionProvider';
 
 const API_URL = process.env.EXPO_PUBLIC_DUMMY_LAP_API;
+const IS_DEVELOP_AUTH = process.env.EXPO_PUBLIC_IS_DEVELOP_AUTH;
 
 export function useAuth() {
   const { signIn, signOut } = useSession();
@@ -43,10 +44,12 @@ export function useAuth() {
   };
 
   const logoutUser = async () => {
-    try {
-      await axios.post(`${API_URL}/logout`);
-    } catch (error) {
-      console.error('Logout error:', error);
+    if (IS_DEVELOP_AUTH !== 'true') {
+      try {
+        await axios.post(`${API_URL}/logout`);
+      } catch (error) {
+        console.error('Logout error:', error);
+      }
     }
     signOut();
   };
