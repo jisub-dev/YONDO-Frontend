@@ -1,5 +1,6 @@
 import { createContext, useContext } from 'react';
 import { useColorScheme } from 'react-native';
+import { StatusBar } from 'expo-status-bar';
 
 // ✅ 테마 컨텍스트 생성
 const ThemeContext = createContext('light');
@@ -8,6 +9,7 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
   const colorScheme = useColorScheme() || 'light'; // ✅ 다크모드 감지
   return (
     <ThemeContext.Provider value={colorScheme}>
+      <StatusBar style={colorScheme === 'light' ? 'dark' : 'light'} />
       {children}
     </ThemeContext.Provider>
   );

@@ -3,6 +3,7 @@ import LoginScreen from '@/screen/LoginScreen';
 import RegisterScreen from '@/screen/RegisterScreen';
 import { View, StyleSheet, Animated, useColorScheme } from 'react-native';
 import ForgotScreen from '@/screen/ForgotPasswordScreen';
+import { StatusBar } from 'expo-status-bar';
 
 type PageType = 'login' | 'register' | 'forgot';
 
@@ -16,13 +17,13 @@ export default function Authentication() {
     (toPage: any) => {
       Animated.timing(opacity, {
         toValue: 0, // ✅ 서서히 사라짐
-        duration: 400,
+        duration: 500,
         useNativeDriver: true,
       }).start(() => {
         setPage(toPage);
         Animated.timing(opacity, {
           toValue: 1, // ✅ 서서히 나타남
-          duration: 400,
+          duration: 500,
           useNativeDriver: true,
         }).start();
       });
@@ -38,6 +39,7 @@ export default function Authentication() {
         isDarkMode ? styles.darkContainer : styles.lightContainer,
       ]}
     >
+      {/* <StatusBar style="light" /> */}
       <Animated.View style={[styles.pageContainer, { opacity }]}>
         {page === 'login' ? (
           <LoginScreen togglePage={togglePage} />
