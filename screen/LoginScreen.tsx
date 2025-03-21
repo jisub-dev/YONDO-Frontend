@@ -7,7 +7,7 @@
  * @params { togglePage }
  * @returns { JSX.Element }
  */
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import {
   View,
   Text,
@@ -25,11 +25,17 @@ interface LoginProps {
   togglePage: (toString: string) => void;
 }
 
+const IS_DEVELOP_AUTH = process.env.EXPO_PUBLIC_IS_DEVELOP_AUTH;
+
 export default function LoginScreen({ togglePage }: LoginProps) {
   const [identifier, setEmail] = useState('qqqqqqqq');
   const [password, setPassword] = useState('qqqqqqqq');
   const { loginUser } = useAuth();
   const theme = useColorScheme();
+
+  // useEffect(function clearPassword() {
+  //   setPassword('');
+  // }, []);
 
   const handleLogin = async () => {
     if (!identifier.trim()) {
@@ -46,7 +52,9 @@ export default function LoginScreen({ togglePage }: LoginProps) {
     // }
 
     try {
-      await loginUser(identifier.trim(), password);
+      if (IS_DEVELOP_AUTH) {
+        await loginUser(identifier.trim(), password);
+      }
       Alert.alert('로그인 성공', '환영합니다!');
       router.replace('/');
     } catch (error: any) {
@@ -61,97 +69,92 @@ export default function LoginScreen({ togglePage }: LoginProps) {
   };
 
   return (
-      <ScrollView
-        style={
-          theme === 'dark' ? styles.darkScrollView : styles.lightScrollView
-        }
-        contentContainerStyle={styles.scrollContentContainer}
+    <ScrollView
+      style={theme === 'dark' ? styles.darkScrollView : styles.lightScrollView}
+      contentContainerStyle={styles.scrollContentContainer}
+    >
+      <View
+        style={theme === 'dark' ? styles.darkContainer : styles.lightContainer}
       >
-        <View
-          style={
-            theme === 'dark' ? styles.darkContainer : styles.lightContainer
-          }
+        <Text style={theme === 'dark' ? styles.darkTitle : styles.lightTitle}>
+          {/* 🎾 연두테니스 <- 애매함*/}
+          연두테니스
+        </Text>
+        <Text
+          style={theme === 'dark' ? styles.darkSubTitle : styles.lightSubTitle}
         >
-          <Text style={theme === 'dark' ? styles.darkTitle : styles.lightTitle}>
-            {/* 🎾 연두테니스 <- 애매함*/}
-            연두테니스
-          </Text>
+          로그인
+        </Text>
+
+        <TextInput
+          style={theme === 'dark' ? styles.darkInput : styles.lightInput}
+          placeholder='아이디를 입력해주세요'
+          value={identifier}
+          onChangeText={(text) => setEmail(text.slice(0, 40))}
+          autoCapitalize='none'
+          placeholderTextColor={theme === 'dark' ? '#aaa' : '#555'}
+        />
+
+        <TextInput
+          style={theme === 'dark' ? styles.darkInput : styles.lightInput}
+          placeholder='비밀번호'
+          value={password}
+          onChangeText={(text) => setPassword(text.slice(0, 40))}
+          secureTextEntry
+          autoCapitalize='none'
+          placeholderTextColor={theme === 'dark' ? '#aaa' : '#555'}
+        />
+
+        {/* 로그인 버튼 */}
+        <TouchableOpacity
+          style={theme === 'dark' ? styles.darkButton : styles.lightButton}
+          onPress={handleLogin}
+        >
           <Text
             style={
-              theme === 'dark' ? styles.darkSubTitle : styles.lightSubTitle
+              theme === 'dark'
+                ? styles.darkButtonText1
+                : styles.lightButtonText1
             }
           >
             로그인
           </Text>
+        </TouchableOpacity>
 
-          <TextInput
-            style={theme === 'dark' ? styles.darkInput : styles.lightInput}
-            placeholder='아이디를 입력해주세요'
-            value={identifier}
-            onChangeText={(text) => setEmail(text.slice(0, 40))}
-            autoCapitalize='none'
-            placeholderTextColor={theme === 'dark' ? '#aaa' : '#555'}
-          />
-
-          <TextInput
-            style={theme === 'dark' ? styles.darkInput : styles.lightInput}
-            placeholder='비밀번호'
-            value={password}
-            onChangeText={(text) => setPassword(text.slice(0, 40))}
-            secureTextEntry
-            placeholderTextColor={theme === 'dark' ? '#aaa' : '#555'}
-          />
-
-          {/* 로그인 버튼 */}
-          <TouchableOpacity
-            style={theme === 'dark' ? styles.darkButton : styles.lightButton}
-            onPress={handleLogin}
-          >
-            <Text
-              style={
-                theme === 'dark'
-                  ? styles.darkButtonText1
-                  : styles.lightButtonText1
-              }
-            >
-              로그인
-            </Text>
-          </TouchableOpacity>
-
-          {/* 회원가입 버튼 */}
-          <TouchableOpacity
+        {/* 회원가입 버튼 */}
+        <TouchableOpacity
+          style={
+            theme === 'dark'
+              ? styles.darkButtonOutline
+              : styles.lightButtonOutline
+          }
+          onPress={() => togglePage('register')}
+        >
+          <Text
             style={
               theme === 'dark'
-                ? styles.darkButtonOutline
-                : styles.lightButtonOutline
+                ? styles.darkButtonText2
+                : styles.lightButtonText2
             }
-            onPress={() => togglePage('register')}
           >
-            <Text
-              style={
-                theme === 'dark'
-                  ? styles.darkButtonText2
-                  : styles.lightButtonText2
-              }
-            >
-              회원가입하러 가기
-            </Text>
-          </TouchableOpacity>
+            회원가입하러 가기
+          </Text>
+        </TouchableOpacity>
 
-          {/* 비밀번호 찾기 */}
-          <TouchableOpacity onPress={() => togglePage('forgot')}>
-            <Text
-              style={
-                theme === 'dark'
-                  ? styles.darkForgotPasswordText
-                  : styles.lightForgotPasswordText
-              }
-            >
-              비밀번호를 까먹었어요?
-            </Text>
-          </TouchableOpacity>
-        </View>
-      </ScrollView>
+        {/* 비밀번호 찾기 */}
+        <TouchableOpacity onPress={() => togglePage('forgot')}>
+          <Text
+            style={
+              theme === 'dark'
+                ? styles.darkForgotPasswordText
+                : styles.lightForgotPasswordText
+            }
+          >
+            비밀번호를 까먹었어요?
+          </Text>
+        </TouchableOpacity>
+      </View>
+    </ScrollView>
   );
 }
 
