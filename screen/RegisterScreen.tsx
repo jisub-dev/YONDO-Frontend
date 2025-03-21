@@ -214,7 +214,8 @@ export default function RegisterScreen({ togglePage }: RegisterProps) {
                 )
               }
               dropdownIconColor={theme === 'dark' ? '#fff' : '#000'}
-              style={[theme === 'dark' ? styles.darkPicker : styles.lightPicker, 
+              style={[
+                theme === 'dark' ? styles.darkPicker : styles.lightPicker,
                 // Platform.OS === 'android' ? styles.androidDropDown : null
               ]}
               itemStyle={styles.pickerItem}
@@ -348,8 +349,7 @@ export default function RegisterScreen({ togglePage }: RegisterProps) {
               0.7 : 나는 그린 볼 강습 중이다.
             </Text>
             <Text style={theme === 'dark' ? styles.darkText : styles.lightText}>
-              1.0 : 나는 옐로우 볼 강습 중이고, 테니스 라켓을 처음
-              잡아봤다.
+              1.0 : 나는 옐로우 볼 강습 중이고, 테니스 라켓을 처음 잡아봤다.
             </Text>
             <Text style={theme === 'dark' ? styles.darkText : styles.lightText}>
               1.5 : 나는 경험이 부족한 테린이다.
@@ -371,7 +371,7 @@ export default function RegisterScreen({ togglePage }: RegisterProps) {
             </Text>
           </View>
         </View>
-        
+
         <View style={styles.phoneContainer}>
           <Text style={theme === 'dark' ? styles.darkLabel : styles.lightLabel}>
             전화번호
@@ -940,50 +940,6 @@ const styles = StyleSheet.create({
     marginTop: 15,
     paddingLeft: 5,
   },
-  // 성별 선택 스타일
-  genderContainer: {
-    width: '100%',
-    marginBottom: 15,
-  },
-  genderButtonsContainer: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-  },
-  lightGenderButton: {
-    flex: 1,
-    height: 45,
-    justifyContent: 'center',
-    alignItems: 'center',
-    borderRadius: 8,
-    borderWidth: 1,
-    borderColor: '#ddd',
-    marginHorizontal: 5,
-    backgroundColor: '#fff',
-  },
-  darkGenderButton: {
-    flex: 1,
-    height: 45,
-    justifyContent: 'center',
-    alignItems: 'center',
-    borderRadius: 8,
-    borderWidth: 1,
-    borderColor: '#444',
-    marginHorizontal: 5,
-    backgroundColor: '#2a2a2a',
-  },
-  lightSelectedButton: {
-    backgroundColor: '#228B22',
-    borderColor: '#228B22',
-  },
-  darkSelectedButton: {
-    backgroundColor: '#32CD32',
-    borderColor: '#32CD32',
-  },
-  selectedButtonText: {
-    color: '#fff',
-    fontWeight: '600',
-  },
-
   // 전화번호 스타일
   phoneContainer: {
     width: '100%',
@@ -1123,6 +1079,6 @@ const styles = StyleSheet.create({
     fontWeight: '600',
   },
   androidDropDown: {
-    paddingLeft: 100
-  }
+    paddingLeft: 100,
+  },
 });
