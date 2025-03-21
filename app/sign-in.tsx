@@ -68,4 +68,6 @@ const styles = StyleSheet.create({
     height: '100%',
     position: 'absolute',
   },
+  container: { flex: 1, justifyContent: 'center', alignItems: 'center' },
+  pageContainer: { width: '100%', height: '100%', position: 'absolute' }, // ✅ 페이지가 겹치도록
 });

@@ -21,6 +21,7 @@
         "backgroundColor": "#ffffff"
       },
       "package": "com.dongubak.younduApp"
+      }
     },
     "web": {
       "bundler": "metro",
