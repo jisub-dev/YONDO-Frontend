@@ -17,13 +17,13 @@ export default function Authentication() {
     (toPage: any) => {
       Animated.timing(opacity, {
         toValue: 0, // ✅ 서서히 사라짐
-        duration: 500,
+        duration: 600,
         useNativeDriver: true,
       }).start(() => {
         setPage(toPage);
         Animated.timing(opacity, {
           toValue: 1, // ✅ 서서히 나타남
-          duration: 500,
+          duration: 600,
           useNativeDriver: true,
         }).start();
       });

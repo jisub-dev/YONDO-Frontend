@@ -76,6 +76,8 @@ import BankAndAccountInput from '@/components/auth/BankAndAccountInput';
 import NTRPPicker from '@/components/auth/NTRPPicker';
 import PhoneInput from '@/components/auth/PhoneInput';
 import BranchPicker from '@/components/auth/BranchPicker';
+import ModalSelect from '@/components/common/ModalSelect';
+import CashReceiptOption from '@/components/auth/CashReceiptOption';
 
 interface RegisterProps {
   togglePage: (toPage: string) => void;
@@ -91,11 +93,15 @@ export default function RegisterScreen({ togglePage }: RegisterProps) {
   const [phonePart1, setPhonePart1] = useState('');
   const [phonePart2, setPhonePart2] = useState('');
   const [branch, setBranch] = useState<BranchType>('에코시티점');
-  const [age, setAge] = useState('');
+
+  const [birth, setBirth] = useState<Date>(new Date());
+  
   const [ntrp, setNtrp] = useState<NTRPType>('0.1');
   const [refundAccount, setRefundAccount] = useState('');
   const [refundBank, setRefundBank] = useState<BankType>('전북은행');
-  const [receiptInfo, setReceiptInfo] = useState<'발급' | '미발급'>('발급');
+  const [receiptInfo, setReceiptInfo] = useState<'발급' | '미발급'>('미발급');
+  const [receiptType, setReceiptType] = useState<'개인' | '법인'>('개인');
+  const [receiptNumber, setReceiptNumber] = useState<string>('');
   const [trainerId, setTrainerId] = useState('');
   const { registerUser } = useAuth();
   const theme = useColorScheme();
@@ -134,6 +140,7 @@ export default function RegisterScreen({ togglePage }: RegisterProps) {
       );
 
     try {
+
       Alert.alert('회원가입 성공!', '환영합니다!');
       router.replace('/');
     } catch (error: any) {
@@ -162,6 +169,8 @@ export default function RegisterScreen({ togglePage }: RegisterProps) {
         >
           회원가입
         </Text>
+
+        {/* 아이디, 비밀번호, 비밀번호 확인, 이름, 나이, 성별 입력 */}
         <BasicInfo
           theme={theme}
           identifier={identifier}
@@ -172,13 +181,16 @@ export default function RegisterScreen({ togglePage }: RegisterProps) {
           setPasswordConfirm={setPasswordConfirm}
           name={name}
           setName={setName}
-          age={age}
-          setAge={setAge}
+          birth={birth}
+          setBirth={setBirth}
           gender={gender}
           setGender={setGender}
         />
 
+        {/* NTRP 입력 */}
         <NTRPPicker ntrp={ntrp} setNtrp={setNtrp} />
+
+        {/* 전화번호 입력 */}
         <PhoneInput
           phonePrefix={phonePrefix}
           setPhonePrefix={setPhonePrefix}
@@ -187,8 +199,11 @@ export default function RegisterScreen({ togglePage }: RegisterProps) {
           phonePart2={phonePart2}
           setPhonePart2={setPhonePart2}
         />
+
+        {/* 지점 입력 */}
         <BranchPicker branch={branch} setBranch={setBranch} />
 
+        {/* 환불 은행 정보 및 계좌번호 입력 */}
         <BankAndAccountInput
           refundAccount={refundAccount}
           refundBank={refundBank}
@@ -196,15 +211,28 @@ export default function RegisterScreen({ togglePage }: RegisterProps) {
           setRefundAccount={setRefundAccount}
         />
 
-        <TextInput
-          style={theme === 'dark' ? styles.darkInput : styles.lightInput}
-          placeholder='트레이너 아이디'
-          value={trainerId}
-          onChangeText={(text) => setTrainerId(text.replace(/[A-z]/g, ''))}
-          autoCapitalize='none'
-          placeholderTextColor={theme === 'dark' ? '#aaa' : '#555'}
-        />
+        <CashReceiptOption receiptInfo={receiptInfo} setReceiptInfo={setReceiptInfo}
+          receiptType={receiptType} setReceiptType={setReceiptType}
+          receiptNumber={receiptNumber} setReceiptNumber={setReceiptNumber} />
 
+        {/* 트레이너 아이디 입력 */}
+        <View style={styles.trainerContainer}>
+          <Text style={theme === 'dark' ? styles.darkLabel : styles.lightLabel}>
+            트레이너 입력
+          </Text>
+        
+            <TextInput
+            style={theme === 'dark' ? styles.darkInput : styles.lightInput}
+            placeholder='트레이너 아이디'
+            value={trainerId}
+            onChangeText={(text) => setTrainerId(text.replace(/[A-z]/g, ''))}
+            autoCapitalize='none'
+            placeholderTextColor={theme === 'dark' ? '#aaa' : '#555'}
+          />
+        </View>
+        
+
+        {/* 회원가입 버튼 */}
         <TouchableOpacity
           onPress={() => {}}
           style={theme === 'dark' ? styles.darkButton : styles.lightButton}
@@ -219,6 +247,7 @@ export default function RegisterScreen({ togglePage }: RegisterProps) {
             회원가입
           </Text>
         </TouchableOpacity>
+        
         {/* 로그인으로 이동 버튼 */}
         <TouchableOpacity
           onPress={() => togglePage('login')}
@@ -305,7 +334,7 @@ const styles = StyleSheet.create({
     width: '100%',
     height: 50,
     borderRadius: 8,
-    marginBottom: 15,
+    marginBottom: 5,
     paddingHorizontal: 15,
     fontSize: 16,
     borderWidth: 1,
@@ -317,7 +346,7 @@ const styles = StyleSheet.create({
     width: '100%',
     height: 50,
     borderRadius: 8,
-    marginBottom: 15,
+    marginBottom: 5,
     paddingHorizontal: 15,
     fontSize: 16,
     borderWidth: 1,
@@ -385,5 +414,20 @@ const styles = StyleSheet.create({
     color: '#32CD32',
     fontSize: 16,
     fontWeight: '600',
+  },
+  trainerContainer: {
+    width: '100%',
+  },
+  lightLabel: {
+    fontSize: 16,
+    marginBottom: 8,
+    color: '#333',
+    alignSelf: 'flex-start',
+  },
+  darkLabel: {
+    fontSize: 16,
+    marginBottom: 8,
+    color: '#f5f5f5',
+    alignSelf: 'flex-start',
   },
 });
