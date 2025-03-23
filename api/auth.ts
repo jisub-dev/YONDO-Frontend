@@ -14,12 +14,12 @@ export function useAuth() {
         password,
       });
 
-      if (!response.data?.token) {
+      if (!response.data) {
         throw new Error('Invalid login response');
       }
 
-      signIn(response.data.token); // ✅ 세션 저장 (자동 로그인)
-      return response.data.token;
+      signIn(response.data); // ✅ 세션 저장 (자동 로그인)
+      return response.data;
     } catch (error: any) {
       throw error;
     }

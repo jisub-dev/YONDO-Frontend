@@ -40,15 +40,7 @@ export default function BankAndAccountInput({
         <Text style={theme === 'dark' ? styles.darkLabel : styles.lightLabel}>
           환불 은행
         </Text>
-        <View
-          style={
-            theme === 'dark'
-              ? styles.darkPickerWrapper
-              : styles.lightPickerWrapper
-          }
-        >
-          <BankPicker refundBank={refundBank} setRefundBank={setRefundBank} />
-        </View>
+        <BankPicker refundBank={refundBank} setRefundBank={setRefundBank} />
       </View>
       <AccountInput
         refundAccount={refundAccount}
@@ -61,7 +53,6 @@ export default function BankAndAccountInput({
 const styles = StyleSheet.create({
   pickerContainer: {
     width: '100%',
-    marginBottom: 15,
   },
   lightPickerWrapper: {
     backgroundColor: '#fff',
@@ -81,14 +72,12 @@ const styles = StyleSheet.create({
   },
   lightLabel: {
     fontSize: 16,
-    marginBottom: 8,
     color: '#333',
-    alignSelf: 'flex-start',
+    // alignSelf: 'flex-start',
   },
   darkLabel: {
     fontSize: 16,
-    marginBottom: 8,
     color: '#f5f5f5',
-    alignSelf: 'flex-start',
+    // alignSelf: 'flex-start',
   },
 });
