@@ -3,9 +3,9 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import * as DeviceInfo from 'react-native-device-info';
 
 type SessionType = {
-  token: string | null,
-  RT: string | null,
-}
+  token: string | null;
+  RT: string | null;
+};
 
 // ✅ SecureStore를 동적으로 불러오기
 const SecureStore = Platform.OS !== 'web' ? require('expo-secure-store') : null;

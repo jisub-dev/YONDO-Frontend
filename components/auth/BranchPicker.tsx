@@ -1,7 +1,6 @@
+import { BranchType } from '@/screen/RegisterScreen';
 import { Picker } from '@react-native-picker/picker';
 import { Platform, StyleSheet, Text, useColorScheme, View } from 'react-native';
-
-type BranchType = '신시가지점' | '에코시티점' | '혁신도시점';
 
 interface BranchPickerPropsType {
   branch: BranchType;
@@ -27,9 +26,7 @@ export default function BranchPicker({
       >
         <Picker
           selectedValue={branch}
-          onValueChange={(itemValue) =>
-            setBranch(itemValue as '신시가지점' | '에코시티점' | '혁신도시점')
-          }
+          onValueChange={(itemValue) => setBranch(itemValue as BranchType)}
           dropdownIconColor={theme === 'dark' ? '#fff' : '#000'}
           style={theme === 'dark' ? styles.darkPicker : styles.lightPicker}
           itemStyle={styles.pickerItem}

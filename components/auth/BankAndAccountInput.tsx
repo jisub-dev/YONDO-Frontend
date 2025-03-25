@@ -1,29 +1,13 @@
 import { StyleSheet, Text, useColorScheme, View } from 'react-native';
 import BankPicker from './BankPicker';
 import AccountInput from './AccountInput';
-
-type BankType =
-  | 'KB국민은행'
-  | '우리은행'
-  | '신한은행'
-  | '하나은행'
-  | '광주은행'
-  | '경남은행'
-  | '대구은행'
-  | '부산은행'
-  | '전북은행'
-  | '제주은행'
-  | '카카오뱅크'
-  | '케이뱅크'
-  | '토스뱅크'
-  | '농협은행'
-  | 'IBK기업은행';
+import { RefundAccountType, RefundBankType } from '@/screen/RegisterScreen';
 
 interface BankPickerProps {
-  refundAccount: string;
-  refundBank: BankType;
-  setRefundBank: React.Dispatch<React.SetStateAction<BankType>>;
-  setRefundAccount: React.Dispatch<React.SetStateAction<string>>;
+  refundAccount: RefundAccountType;
+  refundBank: RefundBankType;
+  setRefundBank: React.Dispatch<React.SetStateAction<RefundBankType>>;
+  setRefundAccount: React.Dispatch<React.SetStateAction<RefundAccountType>>;
 }
 
 export default function BankAndAccountInput({

@@ -1,3 +1,4 @@
+import { BirthType } from '@/screen/RegisterScreen';
 import { DateTimePickerEvent } from '@react-native-community/datetimepicker';
 import DateTimePicker from '@react-native-community/datetimepicker';
 import React, { useState } from 'react';
@@ -12,15 +13,15 @@ import {
 } from 'react-native';
 
 interface InputBirthPropsType {
-  birth: Date;
-  setBirth: React.Dispatch<React.SetStateAction<Date>>;
+  birth: BirthType;
+  setBirth: React.Dispatch<React.SetStateAction<BirthType>>;
 }
 
 export default function InputBirth({ birth, setBirth }: InputBirthPropsType) {
   const theme = useColorScheme();
   const [showPicker, setShowPicker] = useState(false);
 
-  const onChange = (event: DateTimePickerEvent, selectedDate?: Date) => {
+  const onChange = (event: DateTimePickerEvent, selectedDate?: BirthType) => {
     if (Platform.OS === 'android') {
       setShowPicker(false);
     }

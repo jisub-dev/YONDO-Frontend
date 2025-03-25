@@ -1,8 +1,9 @@
+import { RefundAccountType } from '@/screen/RegisterScreen';
 import { StyleSheet, TextInput, useColorScheme } from 'react-native';
 
 interface BankPickerProps {
-  refundAccount: string;
-  setRefundAccount: React.Dispatch<React.SetStateAction<string>>;
+  refundAccount: RefundAccountType;
+  setRefundAccount: React.Dispatch<React.SetStateAction<RefundAccountType>>;
 }
 
 export default function ({ refundAccount, setRefundAccount }: BankPickerProps) {

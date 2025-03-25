@@ -5,7 +5,7 @@ import { useStorageState } from '../hooks/useStorageState';
 type SessionType = {
   token: string | null;
   RT: string | null;
-}
+};
 
 const AuthContext = createContext({
   signIn: (session: SessionType) => {},

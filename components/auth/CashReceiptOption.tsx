@@ -6,17 +6,21 @@ import {
   TouchableOpacity,
   StyleSheet,
   useColorScheme,
-  Platform,
 } from 'react-native';
 import { Picker } from '@react-native-picker/picker';
+import {
+  ReceiptInfoType,
+  ReceiptNumberType,
+  ReceiptTypeType,
+} from '@/screen/RegisterScreen';
 
 interface Props {
-  receiptInfo: '발급' | '미발급';
-  setReceiptInfo: (val: '발급' | '미발급') => void;
-  receiptType: '개인' | '법인';
-  setReceiptType: (val: '개인' | '법인') => void;
-  receiptNumber: string;
-  setReceiptNumber: (val: string) => void;
+  receiptInfo: ReceiptInfoType;
+  setReceiptInfo: (val: ReceiptInfoType) => void;
+  receiptType: ReceiptTypeType;
+  setReceiptType: (val: ReceiptTypeType) => void;
+  receiptNumber: ReceiptNumberType;
+  setReceiptNumber: (val: ReceiptNumberType) => void;
 }
 
 export default function CashReceiptOption({
@@ -38,7 +42,7 @@ export default function CashReceiptOption({
         {['발급', '미발급'].map((option) => (
           <TouchableOpacity
             key={option}
-            onPress={() => setReceiptInfo(option as '발급' | '미발급')}
+            onPress={() => setReceiptInfo(option as ReceiptInfoType)}
             style={[
               styles.button,
               theme === 'dark' ? styles.darkButton : styles.lightButton,
@@ -54,8 +58,8 @@ export default function CashReceiptOption({
                 receiptInfo === option
                   ? styles.selectedButtonText
                   : theme === 'dark'
-                  ? styles.darkText
-                  : styles.lightText
+                    ? styles.darkText
+                    : styles.lightText
               }
             >
               {option}
@@ -66,25 +70,35 @@ export default function CashReceiptOption({
 
       {receiptInfo === '발급' && (
         <View style={styles.extraContainer}>
-          <View style={theme === 'dark' ? styles.darkPickerWrapper : styles.lightPickerWrapper}>
+          <View
+            style={
+              theme === 'dark'
+                ? styles.darkPickerWrapper
+                : styles.lightPickerWrapper
+            }
+          >
             <Picker
               selectedValue={receiptType}
-              onValueChange={(value) => setReceiptType(value as '개인' | '법인')}
+              onValueChange={(value) =>
+                setReceiptType(value as ReceiptTypeType)
+              }
               dropdownIconColor={theme === 'dark' ? '#fff' : '#000'}
               style={theme === 'dark' ? styles.darkPicker : styles.lightPicker}
               itemStyle={styles.pickerItem}
             >
-              <Picker.Item label="개인" value="개인" />
-              <Picker.Item label="법인" value="법인" />
+              <Picker.Item label='개인' value='개인' />
+              <Picker.Item label='법인' value='법인' />
             </Picker>
           </View>
 
           <TextInput
             style={theme === 'dark' ? styles.darkInput : styles.lightInput}
-            placeholder="번호 입력"
+            placeholder='번호 입력'
             value={receiptNumber}
-            onChangeText={(text) => setReceiptNumber(text.replace(/[^0-9]/g, '').slice(0, 30))}
-            keyboardType="numeric"
+            onChangeText={(text) =>
+              setReceiptNumber(text.replace(/[^0-9]/g, '').slice(0, 30))
+            }
+            keyboardType='numeric'
             placeholderTextColor={theme === 'dark' ? '#aaa' : '#555'}
           />
         </View>
