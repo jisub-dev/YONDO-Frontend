@@ -1,21 +1,22 @@
 import { Picker } from '@react-native-picker/picker';
 import { Platform, StyleSheet, Text, useColorScheme, View } from 'react-native';
 import NTRPDetail from './NTRPDetail';
+import { NTRPType } from '@/screen/RegisterScreen';
 
-type NTRPType =
-  | '0.1'
-  | '0.5'
-  | '0.7'
-  | '1.0'
-  | '1.5'
-  | '2.0'
-  | '2.5'
-  | '3.0'
-  | '3.5'
-  | '4.0 이상';
+// type NTRPType =
+//   | '0.1'
+//   | '0.5'
+//   | '0.7'
+//   | '1.0'
+//   | '1.5'
+//   | '2.0'
+//   | '2.5'
+//   | '3.0'
+//   | '3.5'
+//   | '4.0 이상';
 
 interface NTRPPickerPropsType {
-  ntrp: string;
+  ntrp: NTRPType;
   setNtrp: React.Dispatch<React.SetStateAction<NTRPType>>;
 }
 
@@ -36,21 +37,7 @@ export default function NTRPPicker({ ntrp, setNtrp }: NTRPPickerPropsType) {
       >
         <Picker
           selectedValue={ntrp}
-          onValueChange={(itemValue) =>
-            setNtrp(
-              itemValue as
-                | '0.1'
-                | '0.5'
-                | '0.7'
-                | '1.0'
-                | '1.5'
-                | '2.0'
-                | '2.5'
-                | '3.0'
-                | '3.5'
-                | '4.0 이상'
-            )
-          }
+          onValueChange={(itemValue) => setNtrp(itemValue as NTRPType)}
           dropdownIconColor={theme === 'dark' ? '#fff' : '#000'}
           style={[
             theme === 'dark' ? styles.darkPicker : styles.lightPicker,

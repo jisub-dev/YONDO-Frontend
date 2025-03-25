@@ -26,7 +26,30 @@
  * @returns { JSX.Element }
  */
 
-type BankType =
+export type IdentifierType = string;
+export type PasswordType = string;
+export type PasswordConfirmType = string;
+export type NameType = string;
+export type PhonePrefixType = '010' | '012' | '013' | '015';
+export type GenderType = '남' | '여';
+export type PhoneType = string;
+export type PhonePart1Type = string;
+export type PhonePart2Type = string;
+export type BranchType = '신시가지점' | '에코시티점' | '혁신도시점';
+export type BirthType = Date;
+export type NTRPType =
+  | '0.1'
+  | '0.5'
+  | '0.7'
+  | '1.0'
+  | '1.5'
+  | '2.0'
+  | '2.5'
+  | '3.0'
+  | '3.5'
+  | '4.0 이상';
+export type CareerType = string;
+export type RefundBankType =
   | 'KB국민은행'
   | '우리은행'
   | '신한은행'
@@ -42,19 +65,12 @@ type BankType =
   | '토스뱅크'
   | '농협은행'
   | 'IBK기업은행';
-type BranchType = '신시가지점' | '에코시티점' | '혁신도시점';
-type PhonePrefixType = '010' | '012' | '013' | '015';
-type NTRPType =
-  | '0.1'
-  | '0.5'
-  | '0.7'
-  | '1.0'
-  | '1.5'
-  | '2.0'
-  | '2.5'
-  | '3.0'
-  | '3.5'
-  | '4.0 이상';
+export type RefundAccountType = string;
+export type ReceiptInfoType = '발급' | '미발급';
+export type ReceiptTypeType = '개인' | '법인';
+export type ReceiptNumberType = string;
+export type TrainerIdType = string;
+
 import React, { useState } from 'react';
 import {
   View,
@@ -78,31 +94,34 @@ import PhoneInput from '@/components/auth/PhoneInput';
 import BranchPicker from '@/components/auth/BranchPicker';
 import ModalSelect from '@/components/common/ModalSelect';
 import CashReceiptOption from '@/components/auth/CashReceiptOption';
+import CareerInput from '@/components/auth/CareerInput';
 
 interface RegisterProps {
   togglePage: (toPage: string) => void;
 }
 
 export default function RegisterScreen({ togglePage }: RegisterProps) {
-  const [identifier, setIdentifier] = useState('');
-  const [password, setPassword] = useState('');
-  const [passwordConfirm, setPasswordConfirm] = useState('');
-  const [name, setName] = useState('');
-  const [gender, setGender] = useState<'남' | '여'>('남');
+  const [identifier, setIdentifier] = useState<IdentifierType>('');
+  const [password, setPassword] = useState<PasswordType>('');
+  const [passwordConfirm, setPasswordConfirm] =
+    useState<PasswordConfirmType>('');
+  const [name, setName] = useState<NameType>('');
+  const [gender, setGender] = useState<GenderType>('남');
   const [phonePrefix, setPhonePrefix] = useState<PhonePrefixType>('010');
-  const [phonePart1, setPhonePart1] = useState('');
-  const [phonePart2, setPhonePart2] = useState('');
+  const [phonePart1, setPhonePart1] = useState<PhonePart1Type>('');
+  const [phonePart2, setPhonePart2] = useState<PhonePart2Type>('');
   const [branch, setBranch] = useState<BranchType>('에코시티점');
 
-  const [birth, setBirth] = useState<Date>(new Date());
-  
+  const [birth, setBirth] = useState<BirthType>(new Date());
+
   const [ntrp, setNtrp] = useState<NTRPType>('0.1');
-  const [refundAccount, setRefundAccount] = useState('');
-  const [refundBank, setRefundBank] = useState<BankType>('전북은행');
-  const [receiptInfo, setReceiptInfo] = useState<'발급' | '미발급'>('미발급');
-  const [receiptType, setReceiptType] = useState<'개인' | '법인'>('개인');
-  const [receiptNumber, setReceiptNumber] = useState<string>('');
-  const [trainerId, setTrainerId] = useState('');
+  const [career, setCareer] = useState<CareerType>('0');
+  const [refundAccount, setRefundAccount] = useState<RefundAccountType>('');
+  const [refundBank, setRefundBank] = useState<RefundBankType>('전북은행');
+  const [receiptInfo, setReceiptInfo] = useState<ReceiptInfoType>('미발급');
+  const [receiptType, setReceiptType] = useState<ReceiptTypeType>('개인');
+  const [receiptNumber, setReceiptNumber] = useState<ReceiptNumberType>('');
+  const [trainerId, setTrainerId] = useState<TrainerIdType>('');
   const { registerUser } = useAuth();
   const theme = useColorScheme();
 
@@ -140,7 +159,7 @@ export default function RegisterScreen({ togglePage }: RegisterProps) {
       );
 
     try {
-
+      const params = {};
       Alert.alert('회원가입 성공!', '환영합니다!');
       router.replace('/');
     } catch (error: any) {
@@ -190,6 +209,8 @@ export default function RegisterScreen({ togglePage }: RegisterProps) {
         {/* NTRP 입력 */}
         <NTRPPicker ntrp={ntrp} setNtrp={setNtrp} />
 
+        <CareerInput career={career} setCareer={setCareer} />
+
         {/* 전화번호 입력 */}
         <PhoneInput
           phonePrefix={phonePrefix}
@@ -211,17 +232,22 @@ export default function RegisterScreen({ togglePage }: RegisterProps) {
           setRefundAccount={setRefundAccount}
         />
 
-        <CashReceiptOption receiptInfo={receiptInfo} setReceiptInfo={setReceiptInfo}
-          receiptType={receiptType} setReceiptType={setReceiptType}
-          receiptNumber={receiptNumber} setReceiptNumber={setReceiptNumber} />
+        <CashReceiptOption
+          receiptInfo={receiptInfo}
+          setReceiptInfo={setReceiptInfo}
+          receiptType={receiptType}
+          setReceiptType={setReceiptType}
+          receiptNumber={receiptNumber}
+          setReceiptNumber={setReceiptNumber}
+        />
 
         {/* 트레이너 아이디 입력 */}
         <View style={styles.trainerContainer}>
           <Text style={theme === 'dark' ? styles.darkLabel : styles.lightLabel}>
             트레이너 입력
           </Text>
-        
-            <TextInput
+
+          <TextInput
             style={theme === 'dark' ? styles.darkInput : styles.lightInput}
             placeholder='트레이너 아이디'
             value={trainerId}
@@ -230,7 +256,6 @@ export default function RegisterScreen({ togglePage }: RegisterProps) {
             placeholderTextColor={theme === 'dark' ? '#aaa' : '#555'}
           />
         </View>
-        
 
         {/* 회원가입 버튼 */}
         <TouchableOpacity
@@ -247,7 +272,7 @@ export default function RegisterScreen({ togglePage }: RegisterProps) {
             회원가입
           </Text>
         </TouchableOpacity>
-        
+
         {/* 로그인으로 이동 버튼 */}
         <TouchableOpacity
           onPress={() => togglePage('login')}

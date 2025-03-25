@@ -2,9 +2,9 @@ import { useEffect, useCallback, useState } from 'react';
 import { getStorageItem, setStorageItem } from './useStorage';
 
 type SessionType = {
-  token: string | null,
-  RT: string | null,
-}
+  token: string | null;
+  RT: string | null;
+};
 
 export function useStorageState(key: string) {
   const [state, setState] = useState<SessionType | null>(null);

@@ -28,8 +28,8 @@ interface LoginProps {
 const IS_DEVELOP_AUTH = process.env.EXPO_PUBLIC_IS_DEVELOP_AUTH;
 
 export default function LoginScreen({ togglePage }: LoginProps) {
-  const [identifier, setEmail] = useState('qqqqqqqq');
-  const [password, setPassword] = useState('qqqqqqqq');
+  const [identifier, setEmail] = useState('newUser');
+  const [password, setPassword] = useState('mypassword');
   const { loginUser } = useAuth();
   const theme = useColorScheme();
 
