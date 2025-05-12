@@ -15,21 +15,31 @@ import {
   TouchableOpacity,
   View,
 } from 'react-native';
+import DateTimePicker from '@react-native-community/datetimepicker';
+import InputBirth from './InputBirth';
+import {
+  BirthType,
+  GenderType,
+  IdentifierType,
+  NameType,
+  PasswordConfirmType,
+  PasswordType,
+} from '@/screen/RegisterScreen';
 
 interface BasicInfoProps {
   theme: 'dark' | 'light' | null | undefined;
-  identifier: string;
-  setIdentifier: (value: string) => void;
-  password: string;
-  setPassword: (value: string) => void;
-  passwordConfirm: string;
-  setPasswordConfirm: (value: string) => void;
-  name: string;
-  setName: (value: string) => void;
-  age: string;
-  setAge: (value: string) => void;
-  gender: '남' | '여';
-  setGender: (value: '남' | '여') => void;
+  identifier: IdentifierType;
+  setIdentifier: (value: IdentifierType) => void;
+  password: PasswordType;
+  setPassword: (value: PasswordType) => void;
+  passwordConfirm: PasswordConfirmType;
+  setPasswordConfirm: (value: PasswordConfirmType) => void;
+  name: NameType;
+  setName: (value: NameType) => void;
+  birth: BirthType;
+  setBirth: React.Dispatch<React.SetStateAction<BirthType>>;
+  gender: GenderType;
+  setGender: (value: GenderType) => void;
 }
 
 export default function BasicInfo({
@@ -42,8 +52,8 @@ export default function BasicInfo({
   setPasswordConfirm,
   name,
   setName,
-  age,
-  setAge,
+  birth,
+  setBirth,
   gender,
   setGender,
 }: BasicInfoProps) {
@@ -84,14 +94,7 @@ export default function BasicInfo({
         placeholderTextColor={theme === 'dark' ? '#aaa' : '#555'}
       />
 
-      <TextInput
-        style={theme === 'dark' ? styles.darkInput : styles.lightInput}
-        placeholder='나이'
-        keyboardType='numeric'
-        value={age}
-        onChangeText={setAge}
-        placeholderTextColor={theme === 'dark' ? '#aaa' : '#555'}
-      />
+      <InputBirth birth={birth} setBirth={setBirth} />
 
       <View style={styles.genderContainer}>
         <Text style={theme === 'dark' ? styles.darkLabel : styles.lightLabel}>
@@ -179,6 +182,12 @@ const styles = StyleSheet.create({
     borderColor: '#ddd',
     color: '#333',
   },
+  birthContainer: {
+    width: '100%',
+    marginTop: 15,
+    marginBottom: 15,
+  },
+  birthPickerContainer: {},
   genderContainer: {
     width: '100%',
     marginBottom: 15,
@@ -240,6 +249,16 @@ const styles = StyleSheet.create({
   darkLabel: {
     fontSize: 16,
     marginBottom: 8,
+    color: '#f5f5f5',
+    alignSelf: 'flex-start',
+  },
+  lightLabelNoMarginBottom: {
+    fontSize: 16,
+    color: '#333',
+    alignSelf: 'flex-start',
+  },
+  darkLabelNoMarginBottom: {
+    fontSize: 16,
     color: '#f5f5f5',
     alignSelf: 'flex-start',
   },
