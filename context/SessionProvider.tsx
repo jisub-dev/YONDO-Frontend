@@ -1,52 +1,54 @@
-import React from 'react';
-import { createContext, useContext } from 'react';
-import { useStorageState } from '../hooks/useStorageState';
+import React, { createContext, useContext, useEffect, useState, ReactNode } from 'react';
+import { useStorageState } from '@/hooks/useStorageState';
 
-type SessionType = {
+export type SessionType = {
   token: string | null;
   RT: string | null;
+  user: any | null; // 필요시 정확한 타입으로 교체
 };
 
-const AuthContext = createContext({
-  signIn: (session: SessionType) => {},
-  signOut: () => {},
-  session: {
-    token: null,
-    RT: null,
-  } as SessionType | null,
+type SessionContextType = {
+  session: SessionType | null;
+  isLoading: boolean;
+  setSession: (value: SessionType | null) => void;
+  signIn: (newSession: SessionType) => void;
+  logoutUser: (identifier?: string) => void;
+};
+
+const SessionContext = createContext<SessionContextType>({
+  session: null,
   isLoading: true,
+  setSession: () => {},
+  signIn: () => {},
+  logoutUser: () => {},
 });
 
-interface SignInParamsType {
-  token: string | null;
-  RT: string | null;
-}
-
-export function SessionProvider({ children }: { children: React.ReactNode }) {
+export const SessionProvider = ({ children }: { children: ReactNode }) => {
   const [[isLoading, session], setSession] = useStorageState('session');
 
-  // const signIn = ({token, RT}: SignInParamsType) => (
-  //   setSession({token, RT})
-  // )
+  const signIn = (newSession: SessionType) => {
+    console.log('✅ signIn 호출됨');
+    setSession(newSession);
+  };
+
+  const logoutUser = (identifier?: string) => {
+    console.log(`🚪 로그아웃: ${identifier}`);
+    setSession(null);
+  };
 
   return (
-    <AuthContext.Provider
+    <SessionContext.Provider
       value={{
-        signIn: (session: SessionType) => {
-          console.log(`✅ SignIn 함수 호출 완료 ${session}`);
-          console.log(session);
-          setSession(session);
-        },
-        signOut: () => setSession(null),
         session,
         isLoading,
+        setSession,
+        signIn,
+        logoutUser,
       }}
     >
       {children}
-    </AuthContext.Provider>
+    </SessionContext.Provider>
   );
-}
+};
 
-export function useSession() {
-  return useContext(AuthContext);
-}
+export const useSession = () => useContext(SessionContext);

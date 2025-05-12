@@ -20,6 +20,7 @@ import {
 } from 'react-native';
 import { useAuth } from '@/api/auth';
 import { router } from 'expo-router';
+import axios from 'axios';
 
 interface LoginProps {
   togglePage: (toString: string) => void;
@@ -28,8 +29,8 @@ interface LoginProps {
 const IS_DEVELOP_AUTH = process.env.EXPO_PUBLIC_IS_DEVELOP_AUTH;
 
 export default function LoginScreen({ togglePage }: LoginProps) {
-  const [identifier, setEmail] = useState('newUser');
-  const [password, setPassword] = useState('mypassword');
+  const [identifier, setEmail] = useState('testusersdd');
+  const [password, setPassword] = useState('aaaaaaaa');
   const { loginUser } = useAuth();
   const theme = useColorScheme();
 
@@ -52,19 +53,29 @@ export default function LoginScreen({ togglePage }: LoginProps) {
     // }
 
     try {
-      if (IS_DEVELOP_AUTH) {
-        await loginUser(identifier.trim(), password);
-      }
+      await loginUser(identifier.trim(), password);
       Alert.alert('로그인 성공', '환영합니다!');
       router.replace('/');
     } catch (error: any) {
       if (error.response?.status === 401) {
         Alert.alert('로그인 실패', '아이디 또는 비밀번호가 틀렸습니다');
         setPassword('');
+      } else if(error.response?.status === 500){
+        Alert.alert('Internal Error', "서버 내부 오류");
       } else {
-        console.error(error);
-        Alert.alert('Internal Error');
+        console.log(error.message);
+        console.log(error.config);
       }
+    }
+  };
+
+  const dummyLogin = async () => {
+    try {
+      const response = await axios('https://jsonplaceholder.typicode.com/todos/1');
+
+      console.log('✅ axios 성공:', response.data);
+    } catch (err: any) {
+      console.log(err);
     }
   };
 
@@ -109,6 +120,7 @@ export default function LoginScreen({ togglePage }: LoginProps) {
         <TouchableOpacity
           style={theme === 'dark' ? styles.darkButton : styles.lightButton}
           onPress={handleLogin}
+          // onPress={dummyLogin}
         >
           <Text
             style={
