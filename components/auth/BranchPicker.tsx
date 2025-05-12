@@ -1,7 +1,6 @@
-import { Picker } from "@react-native-picker/picker";
-import { Platform, StyleSheet, Text, useColorScheme, View } from "react-native"
-
-type BranchType = '신시가지점' | '에코시티점' | '혁신도시점';
+import { BranchType } from '@/screen/RegisterScreen';
+import { Picker } from '@react-native-picker/picker';
+import { Platform, StyleSheet, Text, useColorScheme, View } from 'react-native';
 
 interface BranchPickerPropsType {
   branch: BranchType;
@@ -10,69 +9,65 @@ interface BranchPickerPropsType {
 
 export default function BranchPicker({
   branch,
-  setBranch
+  setBranch,
 }: BranchPickerPropsType) {
   const theme = useColorScheme();
   return (
     <View style={styles.pickerContainer}>
-              <Text style={theme === 'dark' ? styles.darkLabel : styles.lightLabel}>
-                지점 선택
-              </Text>
-              <View
-                style={
-                  theme === 'dark'
-                    ? styles.darkPickerWrapper
-                    : styles.lightPickerWrapper
-                }
-              >
-                <Picker
-                  selectedValue={branch}
-                  onValueChange={(itemValue) =>
-                    setBranch(
-                      itemValue as '신시가지점' | '에코시티점' | '혁신도시점'
-                    )
-                  }
-                  dropdownIconColor={theme === 'dark' ? '#fff' : '#000'}
-                  style={theme === 'dark' ? styles.darkPicker : styles.lightPicker}
-                  itemStyle={styles.pickerItem}
-                >
-                  <Picker.Item
-                    label='신시가지점'
-                    value='신시가지점'
-                    color={
-                      Platform.OS === 'ios'
-                        ? theme === 'dark'
-                          ? '#fff'
-                          : '#000'
-                        : undefined
-                    }
-                  />
-                  <Picker.Item
-                    label='에코시티점'
-                    value='에코시티점'
-                    color={
-                      Platform.OS === 'ios'
-                        ? theme === 'dark'
-                          ? '#fff'
-                          : '#000'
-                        : undefined
-                    }
-                  />
-                  <Picker.Item
-                    label='혁신도시점'
-                    value='혁신도시점'
-                    color={
-                      Platform.OS === 'ios'
-                        ? theme === 'dark'
-                          ? '#fff'
-                          : '#000'
-                        : undefined
-                    }
-                  />
-                </Picker>
-              </View>
-            </View>
-  )
+      <Text style={theme === 'dark' ? styles.darkLabel : styles.lightLabel}>
+        지점 선택
+      </Text>
+      <View
+        style={
+          theme === 'dark'
+            ? styles.darkPickerWrapper
+            : styles.lightPickerWrapper
+        }
+      >
+        <Picker
+          selectedValue={branch}
+          onValueChange={(itemValue) => setBranch(itemValue as BranchType)}
+          dropdownIconColor={theme === 'dark' ? '#fff' : '#000'}
+          style={theme === 'dark' ? styles.darkPicker : styles.lightPicker}
+          itemStyle={styles.pickerItem}
+        >
+          <Picker.Item
+            label='신시가지점'
+            value='신시가지점'
+            color={
+              Platform.OS === 'ios'
+                ? theme === 'dark'
+                  ? '#fff'
+                  : '#000'
+                : undefined
+            }
+          />
+          <Picker.Item
+            label='에코시티점'
+            value='에코시티점'
+            color={
+              Platform.OS === 'ios'
+                ? theme === 'dark'
+                  ? '#fff'
+                  : '#000'
+                : undefined
+            }
+          />
+          <Picker.Item
+            label='혁신도시점'
+            value='혁신도시점'
+            color={
+              Platform.OS === 'ios'
+                ? theme === 'dark'
+                  ? '#fff'
+                  : '#000'
+                : undefined
+            }
+          />
+        </Picker>
+      </View>
+    </View>
+  );
 }
 
 const styles = StyleSheet.create({
@@ -136,4 +131,4 @@ const styles = StyleSheet.create({
     color: '#fff',
     width: '100%',
   },
-})
+});

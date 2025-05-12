@@ -26,25 +26,18 @@
  * @returns { JSX.Element }
  */
 
-type BankType =
-  | 'KB국민은행'
-  | '우리은행'
-  | '신한은행'
-  | '하나은행'
-  | '광주은행'
-  | '경남은행'
-  | '대구은행'
-  | '부산은행'
-  | '전북은행'
-  | '제주은행'
-  | '카카오뱅크'
-  | '케이뱅크'
-  | '토스뱅크'
-  | '농협은행'
-  | 'IBK기업은행';
-type BranchType = '신시가지점' | '에코시티점' | '혁신도시점';
-type PhonePrefixType = '010' | '012' | '013' | '015';
-type NTRPType =
+export type IdentifierType = string;
+export type PasswordType = string;
+export type PasswordConfirmType = string;
+export type NameType = string;
+export type PhonePrefixType = '010' | '012' | '013' | '015';
+export type GenderType = '남' | '여';
+export type PhoneType = string;
+export type PhonePart1Type = string;
+export type PhonePart2Type = string;
+export type BranchType = '신시가지점' | '에코시티점' | '혁신도시점';
+export type BirthType = Date;
+export type NTRPType =
   | '0.1'
   | '0.5'
   | '0.7'
@@ -55,6 +48,57 @@ type NTRPType =
   | '3.0'
   | '3.5'
   | '4.0 이상';
+export type CareerType = string;
+export type RefundBankType =
+ | "한국은행"
+ | "농협은행"
+ | "수협은행"
+ | "산업은행"
+ | "기업은행"
+ | "KEB하나은행"
+ | "KB국민은행"
+ | "신한은행"
+ | "우리은행"
+ | "SC제일은행"
+ | "DGB대구은행"
+ | "BNK부산은행"
+ | "BNK경남은행"
+ | "전북은행"
+ | "제주은행"
+ | "카카오뱅크"
+ | "케이뱅크"
+ | "토스뱅크"
+ | "우체국예금보험"
+ | "한국씨티은행"
+export type RefundAccountType = string;
+export type ReceiptInfoType = '발급' | '미발급';
+export type ReceiptTypeType = '개인' | '법인';
+export type ReceiptNumberType = string;
+export type TrainerIdType = string;
+export type RoleType = 'MEMBER' | 'TRAINER' | 'MANAGER';
+export const refundBankList = [
+  "한국은행",
+  "농협은행",
+  "수협은행",
+  "산업은행",
+  "기업은행",
+  "KEB하나은행",
+  "KB국민은행",
+  "신한은행",
+  "우리은행",
+  "SC제일은행",
+  "DGB대구은행",
+  "BNK부산은행",
+  "BNK경남은행",
+  "전북은행",
+  "제주은행",
+  "카카오뱅크",
+  "케이뱅크",
+  "토스뱅크",
+  "우체국예금보험",
+  "한국씨티은행"
+]
+
 import React, { useState } from 'react';
 import {
   View,
@@ -76,72 +120,130 @@ import BankAndAccountInput from '@/components/auth/BankAndAccountInput';
 import NTRPPicker from '@/components/auth/NTRPPicker';
 import PhoneInput from '@/components/auth/PhoneInput';
 import BranchPicker from '@/components/auth/BranchPicker';
+import ModalSelect from '@/components/common/ModalSelect';
+import CashReceiptOption from '@/components/auth/CashReceiptOption';
+import CareerInput from '@/components/auth/CareerInput';
+import axios from 'axios';
 
 interface RegisterProps {
   togglePage: (toPage: string) => void;
 }
 
 export default function RegisterScreen({ togglePage }: RegisterProps) {
-  const [identifier, setIdentifier] = useState('');
-  const [password, setPassword] = useState('');
-  const [passwordConfirm, setPasswordConfirm] = useState('');
-  const [name, setName] = useState('');
-  const [gender, setGender] = useState<'남' | '여'>('남');
+  const [identifier, setIdentifier] = useState<IdentifierType>('');
+  const [password, setPassword] = useState<PasswordType>('');
+  const [passwordConfirm, setPasswordConfirm] =
+    useState<PasswordConfirmType>('');
+  const [name, setName] = useState<NameType>('');
+  const [gender, setGender] = useState<GenderType>('남');
   const [phonePrefix, setPhonePrefix] = useState<PhonePrefixType>('010');
-  const [phonePart1, setPhonePart1] = useState('');
-  const [phonePart2, setPhonePart2] = useState('');
+  const [phonePart1, setPhonePart1] = useState<PhonePart1Type>('');
+  const [phonePart2, setPhonePart2] = useState<PhonePart2Type>('');
   const [branch, setBranch] = useState<BranchType>('에코시티점');
-  const [age, setAge] = useState('');
+
+  const [birth, setBirth] = useState<BirthType>(new Date());
+
   const [ntrp, setNtrp] = useState<NTRPType>('0.1');
-  const [refundAccount, setRefundAccount] = useState('');
-  const [refundBank, setRefundBank] = useState<BankType>('전북은행');
-  const [receiptInfo, setReceiptInfo] = useState<'발급' | '미발급'>('발급');
-  const [trainerId, setTrainerId] = useState('');
+  const [career, setCareer] = useState<CareerType>('');
+  const [refundAccount, setRefundAccount] = useState<RefundAccountType>('');
+  const [refundBank, setRefundBank] = useState<RefundBankType>('전북은행');
+  const [receiptInfo, setReceiptInfo] = useState<ReceiptInfoType>('미발급');
+  const [receiptType, setReceiptType] = useState<ReceiptTypeType>('개인');
+  const [receiptNumber, setReceiptNumber] = useState<ReceiptNumberType>('');
+  const [trainerId, setTrainerId] = useState<TrainerIdType>('');
   const { registerUser } = useAuth();
   const theme = useColorScheme();
 
   const validateKoreanName = (text: string) => /^[가-힣]{1,5}$/.test(text);
 
   const handleRegister = async () => {
-    if (!identifier.trim())
-      return Alert.alert('아이디 오류', '아이디를 입력해주세요.');
-    if (identifier.trim().length < 8)
-      return Alert.alert('아이디 오류', '아이디는 8자 이상으로 입력해주세요.');
-    if (identifier.trim().length > 40)
-      return Alert.alert('아이디 오류', '아이디는 40자 미만으로 입력해주세요');
-    if (!password.trim())
-      return Alert.alert('비밀번호 오류', '비밀번호를 입력해주세요.');
-    if (password !== passwordConfirm)
-      return Alert.alert('비밀번호 오류', '비밀번호가 일치하지 않습니다.');
-    if (password.length < 8)
-      return Alert.alert(
-        '비밀번호 오류',
-        '비밀번호는 8자리 이상이어야 합니다.'
-      );
-    if (password.length > 40)
-      return Alert.alert(
-        '비밀번호 오류',
-        '비밀번호는 40자 미만으로 입력해주세요.'
-      );
-    if (!validateKoreanName(name))
-      return Alert.alert('이름 오류', '이름은 한글 5자 이하로 입력해주세요.');
-    if (phonePart1.length !== 4 || phonePart2.length !== 4)
-      return Alert.alert('전화번호 오류', '전화번호를 정확히 입력해주세요.');
-    if (!refundAccount.match(/^\d+$/))
-      return Alert.alert(
-        '계좌번호 오류',
-        '환불 계좌번호는 숫자만 입력해주세요.'
-      );
-
+    // ✅ 필수 필드 공백 검사
+    if (!identifier.trim()) return Alert.alert('아이디 오류', '아이디를 입력해주세요.');
+    if (!password.trim()) return Alert.alert('비밀번호 오류', '비밀번호를 입력해주세요.');
+    if (!passwordConfirm.trim()) return Alert.alert('비밀번호 확인 오류', '비밀번호 확인을 입력해주세요.');
+    if (!name.trim()) return Alert.alert('이름 오류', '이름을 입력해주세요.');
+    if (!phonePrefix.trim() || !phonePart1.trim() || !phonePart2.trim()) return Alert.alert('전화번호 오류', '전화번호를 입력해주세요.');
+    if (!branch.trim()) return Alert.alert('지점 오류', '지점을 선택해주세요.');
+    if (!birth) return Alert.alert('생년월일 오류', '생년월일을 입력해주세요.');
+    if (!career) return Alert.alert('경력 오류', '경력을 입력해주세요.');
+    if (!ntrp.trim()) return Alert.alert('NTRP 오류', 'NTRP를 선택해주세요.');
+    if (!refundAccount.trim()) return Alert.alert('계좌번호 오류', '환불 계좌번호를 입력해주세요.');
+    if (!refundBank.trim()) return Alert.alert('환불 은행 오류', '환불 은행을 선택해주세요.');
+    if (!receiptInfo.trim()) return Alert.alert('현금영수증 오류', '현금영수증 발급 여부를 선택해주세요.');
+    if (!receiptType.trim()) return Alert.alert('영수증 유형 오류', '현금영수증 유형을 선택해주세요.');
+    if (!receiptNumber.trim()) return Alert.alert('영수증 번호 오류', '현금영수증 번호를 입력해주세요.');
+  
+    // ✅ 조건별 유효성 검사
+    if (identifier.length < 8) return Alert.alert('아이디 오류', '아이디는 8자 이상이어야 합니다.');
+    if (identifier.length > 40) return Alert.alert('아이디 오류', '아이디는 40자 이하여야 합니다.');
+  
+    if (password.length < 8) return Alert.alert('비밀번호 오류', '비밀번호는 8자 이상이어야 합니다.');
+    if (password.length > 40) return Alert.alert('비밀번호 오류', '비밀번호는 40자 이하여야 합니다.');
+    if (password !== passwordConfirm) return Alert.alert('비밀번호 오류', '비밀번호와 확인값이 일치하지 않습니다.');
+  
+    if (!validateKoreanName(name)) return Alert.alert('이름 오류', '이름은 한글 1~5자 이내여야 합니다.');
+  
+    if (!['남', '여'].includes(gender)) return Alert.alert('성별 오류', '성별은 남 또는 여 중 하나여야 합니다.');
+  
+    const validPrefixes = ['010', '012', '013', '015'];
+    if (!validPrefixes.includes(phonePrefix)) return Alert.alert('전화번호 오류', '전화번호 앞자리는 010, 012, 013, 015 중 하나여야 합니다.');
+    if (phonePart1.length !== 4 || phonePart2.length !== 4) return Alert.alert('전화번호 오류', '전화번호 뒷자리는 4자리씩 입력해주세요.');
+  
+    const validBranches = ['신시가지점', '에코시티점', '혁신도시점'];
+    if (!validBranches.includes(branch)) return Alert.alert('지점 오류', '지점은 신시가지점, 에코시티점, 혁신도시점 중 하나여야 합니다.');
+  
+    const today = new Date();
+    const age = today.getFullYear() - birth.getFullYear();
+    if (age < 1 || age > 80) return Alert.alert('나이 오류', '나이는 1세 이상 80세 이하여야 합니다.');
+  
+    const validNTRP = ['0.1', '0.5', '0.7', '1.0', '1.5', '2.0', '2.5', '3.0', '3.5', '4.0 이상'];
+    if (!validNTRP.includes(ntrp)) return Alert.alert('NTRP 오류', '올바른 NTRP 값을 선택해주세요.');
+  
+    if (!refundAccount.match(/^\d+$/)) return Alert.alert('계좌번호 오류', '환불 계좌번호는 숫자만 입력해주세요.');
+  
+    if (!refundBankList.includes(refundBank)) return Alert.alert('은행 오류', '유효하지 않은 은행입니다.');
+  
+    if (!['발급', '미발급'].includes(receiptInfo)) return Alert.alert('현금영수증 오류', '발급 여부는 "발급" 또는 "미발급"이어야 합니다.');
+  
+    if (!['개인', '법인'].includes(receiptType)) return Alert.alert('현금영수증 유형 오류', '현금영수증 유형은 개인 또는 법인이어야 합니다.');
+  
+    if (trainerId.length > 0 && trainerId.length < 8) return Alert.alert('트레이너 아이디 오류', '트레이너 아이디는 8자 이상이어야 합니다.');
+  
     try {
-      Alert.alert('회원가입 성공!', '환영합니다!');
-      router.replace('/');
+      await registerUser({
+        identifier,
+        password,
+        name,
+        gender,
+        phonePrefix,
+        phonePart1,
+        phonePart2,
+        branch,
+        birth,
+        ntrp,
+        career,
+        refundAccount,
+        refundBank,
+        receiptInfo,
+        receiptType,
+        receiptNumber,
+        trainerId,
+      });
+      Alert.alert('회원가입 성공!', '로그인이 필요합니다.');
+      router.replace('/sign-in');
     } catch (error: any) {
       if (error.response?.status === 409) {
-        Alert.alert('회원가입 실패', '이미 존재하는 아이디입니다.');
+        if (error.response?.data?.message === "phonenumber is already in use") {
+          return Alert.alert('전화번호 오류', '이미 존재하는 전화번호입니다');
+        } else if (error.response?.data?.message === "Identifier is already in use") {
+          return Alert.alert('아이디 오류', '이미 존재하는 아이디입니다.');
+        } else {
+          console.log(error);
+          return Alert.alert("에러 핸들링 실패", "개발자는 에러를 확인할 것");
+        }
       } else {
-        console.error(error);
-        Alert.alert('회원가입 실패', 'Internal Error');
+        console.log(error.response?.data?.message ?? error);
+        return Alert.alert('회원가입 실패', 'Internal Error');
       }
     }
   };
@@ -162,6 +264,8 @@ export default function RegisterScreen({ togglePage }: RegisterProps) {
         >
           회원가입
         </Text>
+
+        {/* 아이디, 비밀번호, 비밀번호 확인, 이름, 나이, 성별 입력 */}
         <BasicInfo
           theme={theme}
           identifier={identifier}
@@ -172,13 +276,18 @@ export default function RegisterScreen({ togglePage }: RegisterProps) {
           setPasswordConfirm={setPasswordConfirm}
           name={name}
           setName={setName}
-          age={age}
-          setAge={setAge}
+          birth={birth}
+          setBirth={setBirth}
           gender={gender}
           setGender={setGender}
         />
 
+        {/* NTRP 입력 */}
         <NTRPPicker ntrp={ntrp} setNtrp={setNtrp} />
+
+        <CareerInput career={career} setCareer={setCareer} />
+
+        {/* 전화번호 입력 */}
         <PhoneInput
           phonePrefix={phonePrefix}
           setPhonePrefix={setPhonePrefix}
@@ -187,8 +296,11 @@ export default function RegisterScreen({ togglePage }: RegisterProps) {
           phonePart2={phonePart2}
           setPhonePart2={setPhonePart2}
         />
+
+        {/* 지점 입력 */}
         <BranchPicker branch={branch} setBranch={setBranch} />
 
+        {/* 환불 은행 정보 및 계좌번호 입력 */}
         <BankAndAccountInput
           refundAccount={refundAccount}
           refundBank={refundBank}
@@ -196,17 +308,34 @@ export default function RegisterScreen({ togglePage }: RegisterProps) {
           setRefundAccount={setRefundAccount}
         />
 
-        <TextInput
-          style={theme === 'dark' ? styles.darkInput : styles.lightInput}
-          placeholder='트레이너 아이디'
-          value={trainerId}
-          onChangeText={(text) => setTrainerId(text.replace(/[A-z]/g, ''))}
-          autoCapitalize='none'
-          placeholderTextColor={theme === 'dark' ? '#aaa' : '#555'}
+        <CashReceiptOption
+          receiptInfo={receiptInfo}
+          setReceiptInfo={setReceiptInfo}
+          receiptType={receiptType}
+          setReceiptType={setReceiptType}
+          receiptNumber={receiptNumber}
+          setReceiptNumber={setReceiptNumber}
         />
 
+        {/* 트레이너 아이디 입력 */}
+        <View style={styles.trainerContainer}>
+          <Text style={theme === 'dark' ? styles.darkLabel : styles.lightLabel}>
+            트레이너 입력
+          </Text>
+
+          <TextInput
+            style={theme === 'dark' ? styles.darkInput : styles.lightInput}
+            placeholder='트레이너 아이디'
+            value={trainerId}
+            onChangeText={setTrainerId}
+            autoCapitalize='none'
+            placeholderTextColor={theme === 'dark' ? '#aaa' : '#555'}
+          />
+        </View>
+
+        {/* 회원가입 버튼 */}
         <TouchableOpacity
-          onPress={() => {}}
+          onPress={handleRegister}
           style={theme === 'dark' ? styles.darkButton : styles.lightButton}
         >
           <Text
@@ -219,6 +348,7 @@ export default function RegisterScreen({ togglePage }: RegisterProps) {
             회원가입
           </Text>
         </TouchableOpacity>
+
         {/* 로그인으로 이동 버튼 */}
         <TouchableOpacity
           onPress={() => togglePage('login')}
@@ -305,7 +435,7 @@ const styles = StyleSheet.create({
     width: '100%',
     height: 50,
     borderRadius: 8,
-    marginBottom: 15,
+    marginBottom: 5,
     paddingHorizontal: 15,
     fontSize: 16,
     borderWidth: 1,
@@ -317,7 +447,7 @@ const styles = StyleSheet.create({
     width: '100%',
     height: 50,
     borderRadius: 8,
-    marginBottom: 15,
+    marginBottom: 5,
     paddingHorizontal: 15,
     fontSize: 16,
     borderWidth: 1,
@@ -385,5 +515,20 @@ const styles = StyleSheet.create({
     color: '#32CD32',
     fontSize: 16,
     fontWeight: '600',
+  },
+  trainerContainer: {
+    width: '100%',
+  },
+  lightLabel: {
+    fontSize: 16,
+    marginBottom: 8,
+    color: '#333',
+    alignSelf: 'flex-start',
+  },
+  darkLabel: {
+    fontSize: 16,
+    marginBottom: 8,
+    color: '#f5f5f5',
+    alignSelf: 'flex-start',
   },
 });

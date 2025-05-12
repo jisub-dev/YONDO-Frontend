@@ -1,3 +1,8 @@
+import {
+  PhonePart1Type,
+  PhonePart2Type,
+  PhonePrefixType,
+} from '@/screen/RegisterScreen';
 import { Picker } from '@react-native-picker/picker';
 import {
   Platform,
@@ -8,14 +13,13 @@ import {
   View,
 } from 'react-native';
 
-type PhonePrefixType = '010' | '012' | '013' | '015';
 interface PhoneInputPropsType {
   phonePrefix: PhonePrefixType;
   setPhonePrefix: React.Dispatch<React.SetStateAction<PhonePrefixType>>;
-  phonePart1: string;
-  setPhonePart1: React.Dispatch<React.SetStateAction<string>>;
-  phonePart2: string;
-  setPhonePart2: React.Dispatch<React.SetStateAction<string>>;
+  phonePart1: PhonePart1Type;
+  setPhonePart1: React.Dispatch<React.SetStateAction<PhonePart1Type>>;
+  phonePart2: PhonePart2Type;
+  setPhonePart2: React.Dispatch<React.SetStateAction<PhonePart2Type>>;
 }
 
 export default function PhoneInput({
@@ -45,7 +49,7 @@ export default function PhoneInput({
           <Picker
             selectedValue={phonePrefix}
             onValueChange={(itemValue) =>
-              setPhonePrefix(itemValue as '010' | '012' | '013' | '015')
+              setPhonePrefix(itemValue as PhonePrefixType)
             }
             dropdownIconColor={theme === 'dark' ? '#fff' : '#000'}
             style={theme === 'dark' ? styles.darkPicker : styles.lightPicker}

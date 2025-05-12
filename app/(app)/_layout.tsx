@@ -3,12 +3,13 @@ import { Redirect, Stack } from 'expo-router';
 
 import { useSession } from '../../context/SessionProvider';
 import { StatusBar } from 'expo-status-bar';
+import { useAxiosInterceptor } from '@/lib/axiosInterceptor';
 
 const IS_DEVELOPMENT_AUTH = process.env.EXPO_PUBLIC_IS_DEVELOP_AUTH;
 
 export default function AppLayout() {
   const { session, isLoading } = useSession();
-
+  
   // You can keep the splash screen open, or render a loading screen like we do here.
   if (isLoading && IS_DEVELOPMENT_AUTH !== 'true') {
     return <Text>Loading...</Text>;
