@@ -13,6 +13,7 @@ export default function Tab() {
   const [[isLoadingStorage, storageState], setStorageState] =
     useStorageState('session');
 
+  
   useEffect(() => {
     if (!isLoading) {
       console.log('✅ 인덱스에서 컨텍스트 세션확인하기');
@@ -25,13 +26,17 @@ export default function Tab() {
     }
   }, [session]);
 
+  const handleLogout = async () => {
+    await logoutUser(session?.user?.identifier);
+  }
+
   return (
     <View
       style={theme === 'dark' ? styles.darkContainer : styles.lightContainer}
     >
       {/* <StatusBar style="light" /> */}
       <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
-        <Text onPress={logoutUser}>Sign Out</Text>
+        <Text onPress={handleLogout}>Sign Out</Text>
       </View>
     </View>
   );

@@ -20,15 +20,25 @@ export default function CareerInput({ career, setCareer }: CareerInputProps) {
   return (
     <View style={styles.careerContainer}>
       <Text style={theme === 'dark' ? styles.darkLabel : styles.lightLabel}>
-        경력
+      경력
       </Text>
       <TextInput
-        style={theme === 'dark' ? styles.darkInput : styles.lightInput}
-        placeholder='경력을 입력해주세요'
-        value={career}
-        onChangeText={(text) => setCareer(text.toString())}
-        keyboardType='number-pad'
-        placeholderTextColor={theme === 'dark' ? '#aaa' : '#555'}
+      style={theme === 'dark' ? styles.darkInput : styles.lightInput}
+      placeholder='경력을 입력해주세요 (0 ~ 60)'
+      value={career}
+      onChangeText={(text) => {
+        const numericValue = parseInt(text, 10);
+        if (!isNaN(numericValue) && numericValue >= 0 && numericValue <= 60 || text === '') {
+          if(text !== '') {
+            setCareer(numericValue.toString());
+          } else {
+            setCareer('');
+          }
+          
+        }
+      }}
+      keyboardType='number-pad'
+      placeholderTextColor={theme === 'dark' ? '#aaa' : '#555'}
       />
     </View>
   );

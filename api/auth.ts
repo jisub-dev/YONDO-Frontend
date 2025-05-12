@@ -20,6 +20,8 @@ import {
   RefundBankType,
   TrainerIdType,
 } from '@/screen/RegisterScreen';
+import { reqParamsType } from '@/app/(app)/(tabs)/myPage';
+import { api } from '@/lib/axiosInstance';
 
 const API_URL = process.env.EXPO_PUBLIC_BACKEND_API;
 const IS_DEVELOP_AUTH = process.env.EXPO_PUBLIC_IS_DEVELOP_AUTH;
@@ -45,11 +47,13 @@ type registerDataType = {
 };
 
 export function useAuth() {
-  const { signIn, signOut } = useSession();
+  const { signIn, logoutUser: contextLogout } = useSession();
 
   const loginUser = async (identifier: string, password: string) => {
+    console.log("로그인 요청");
+    console.log(API_URL)
     try {
-      const response = await axios.post(`${API_URL}/api/sessions`, {
+      const response = await axios.post(`${API_URL}/api/auth/signin`, {
         identifier,
         password,
       });
@@ -61,6 +65,7 @@ export function useAuth() {
       signIn(response.data); // ✅ 세션 저장 (자동 로그인)
       return response.data;
     } catch (error: any) {
+      console.log('로그인 실패:', error);
       throw error;
     }
   };
@@ -85,7 +90,6 @@ export function useAuth() {
     trainerId,
   }: registerDataType) => {
     const phone = phonePrefix + '-' + phonePart1 + '-' + phonePart2;
-    const receiptDetail = receiptType + ' : ' + receiptNumber;
 
     const requestParams = {
       identifier,
@@ -94,57 +98,72 @@ export function useAuth() {
       gender,
       phone,
       branch,
-      birth,
+      birth: birth.getFullYear().toString() + (birth.getMonth() + 1).toString() + birth.getDate().toString(),
       ntrp,
       career,
       refundAccount,
       refundBank,
       receiptInfo,
-      receiptDetail,
+      receiptType,
+      receiptNumber,
       trainerId,
     };
-    // try {
-    //   const response = await axios.post(`${API_URL}/register`, {
-    //     requestParams
-    //   });
 
-    //   if (!response.data?.token) {
-    //     throw new Error('Invalid registration response');
-    //   }
-
-    //   signIn(response.data.token);
-    //   return response.data.token;
-    // } catch (error: any) {
-    //   throw error;
-    // }
-  };
-
-  const logoutUser = async () => {
-    if (IS_DEVELOP_AUTH !== 'true') {
-      try {
-        await axios.post(`${API_URL}/logout`);
-      } catch (error) {
-        console.error('Logout error:', error);
-      }
-    }
-    signOut();
-  };
-
-  const verifyRefreshTokenAndGetNewTokenAndRefreshToken = async () => {
-    const [[isLoading, session], setSession] = useStorageState('session');
+    console.log('requestParams:', requestParams);
+    console.log(API_URL);
     try {
-      const response = await axios.post(`${API_URL}/verify-refreshToken`, {
-        RT: session?.RT,
+      const response = await axios.post(`${API_URL}/api/auth/signup`, {
+        ...requestParams
       });
-
-      if (!response.data) {
-        throw new Error('Invalid login response');
-      }
-
-      setSession(response.data);
-      return response.data;
     } catch (error: any) {
       throw error;
+    }
+  };
+
+  const logoutUser = async (identifier: IdentifierType | undefined) => {
+    try {
+      await axios.delete(`${API_URL}/api/auth/signin`, {
+        data: {identifier}
+      });
+    } catch (error) {
+      console.error('Logout error:', error);
+    }
+    contextLogout(identifier);
+  };
+
+  const updateUserInfo = async (
+    {
+      newPassword,
+      refundAccount,
+      refundBank,
+      receiptInfo,
+      receiptType,
+      receiptNumber,
+    }: reqParamsType,
+    identifier: IdentifierType
+  ) => {
+    try {
+      const requestParams: any = {};
+  
+      if (newPassword) requestParams.password = newPassword;
+      if (refundAccount) requestParams.refundAccount = refundAccount;
+      if (refundBank) requestParams.refundBank = refundBank;
+      if (receiptInfo) requestParams.receiptInfo = receiptInfo;
+      if (receiptType) requestParams.receiptType = receiptType;
+      if (receiptNumber) requestParams.receiptNumber = receiptNumber;
+
+      requestParams.identifier = identifier;
+      // /api/auth/modify-info
+      // ${identifier}
+      console.log('📤 유저 정보 수정 요청 파라미터:', requestParams);
+      console.log('📤 유저 정보 수정 요청 URL:', `${API_URL}/api/auth/modify-info`);
+      const response = await api.patch(`${API_URL}/api/auth/modify-info`, requestParams);
+      console.log('✅ 유저 정보 수정 응답:', response.data);
+      return response.data;
+    } catch (e: any) {
+      console.error('❌ 유저 정보 수정 실패:', e.response?.data?.message || e.response);
+      console.log(e.response);
+      throw e;
     }
   };
 
@@ -152,6 +171,6 @@ export function useAuth() {
     loginUser,
     registerUser,
     logoutUser,
-    verifyRefreshTokenAndGetNewTokenAndRefreshToken,
+    updateUserInfo
   };
 }
